@@ -24,13 +24,14 @@ func without(b byte, bs []byte) []byte {
 }
 
 
-func permOf(xs []byte, t []byte) bool {
+func permOf(xs []byte, t []byte, lenxs int, lent int) bool {
 
-	if len(xs) == 0 && len(t) == 0 { 
+	if lenxs == 0 && lent == 0 { 
 		return true 
-	} else if len(xs) == len(t) {
+	} else if lenxs == lent {
 		x := xs[0]
-		return elem(x, t) && permOf(xs[1:], without(x, t))
+		newlen := lenxs - 1
+		return elem(x, t) && permOf(xs[1:], without(x, t), newlen, newlen)
 	} 
 	return false
 }
@@ -39,12 +40,14 @@ func permOf(xs []byte, t []byte) bool {
 func main() {
 
 	target  := []byte(os.Args[1])
+	targetl := len(target)
 	file, _ := os.Open("/usr/share/dict/words")
 	reader  := bufio.NewReader(file)
+	
 	for {
 		word, _, err := reader.ReadLine(); 
 		if err == io.EOF { break }
-		if permOf(word, target) {
+		if permOf(word, target, len(word), targetl) {
 			fmt.Println(string(word))
 		}
 	}
